@@ -1,113 +1,121 @@
-import Image from 'next/image'
+'use client'
+
+import { FormEvent, useRef, useState } from 'react'
+
+interface IFormConfirmation {
+  name: string
+  attending: boolean
+}
 
 export default function Home() {
+  const [attendance, setAttendance] = useState<boolean>(false)
+  const [rsvpConfirmation, setRsvpConfirmation] = useState<IFormConfirmation | undefined>(undefined)
+
+  const fnameRef = useRef<HTMLInputElement>(null)
+  const emailRef = useRef<HTMLInputElement>(null)
+  const contactNoRef = useRef<HTMLInputElement>(null)
+
+  async function sendRsvp(e: FormEvent) {
+    e.preventDefault()
+
+    if ([fnameRef.current, emailRef.current, contactNoRef.current].includes(null)) return
+
+    setRsvpConfirmation({
+      name: fnameRef.current?.value as string,
+      attending: attendance
+    })
+  }
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
+    <div>
+      <ul role="list" className="space-y-4 py-8">
+        <li className="overflow-hidden bg-white px-4 py-4 shadow sm:rounded-md sm:px-6">
+          <div className="border-b border-gray-200 bg-white px-4 py-5 sm:px-6">
+            <h2 className="text-base font-semibold leading-6 text-gray-900">Wedding Details</h2>
+          </div>
+          <div className='grid grid-cols-1 sm:grid-cols-3 py-5 gap-8 text-center'>
+            <p>Date</p>
+            <p>Time</p>
+            <p>Location</p>
+          </div>
+        </li>
 
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
+        <li className="overflow-hidden bg-white px-4 py-4 shadow sm:rounded-md sm:px-6">
+          <div className="border-b border-gray-200 bg-white px-4 py-5 sm:px-6">
+            <h2 className="text-base font-semibold leading-6 text-gray-900">RSVP Form</h2>
+          </div>
+          {rsvpConfirmation ? (
+            <div className='py-5'>
+              <h2>Thank you {rsvpConfirmation.name} for updating your RSVP.</h2>
+              {rsvpConfirmation.attending ?
+                <p>We&apos;re really excited and look forward to seeing you on our special day.</p> :
+                <p>We&apos;re sorry to hear you&apos;re unable to attend.</p>
+              }
+            </div>
+          ) :
+            <form onSubmit={sendRsvp} className='grid grid-flow-row gap-2 py-5 text-center sm:grid-cols-2 md:grid-cols-4 items-center'>
+              <label htmlFor='fname'>Name</label>
+              <input ref={fnameRef} type='text' name='fname' required className='p-2 rounded-md mx-2 bg-slate-50 border-slate-200 border-2' />
 
-      <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
+              <label htmlFor='email'>Email</label>
+              <input ref={emailRef} type='email' name='number' required className='p-2 rounded-md mx-2 bg-slate-50 border-slate-200 border-2' />
 
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
+              <label htmlFor='contactNo'>Contact No.</label>
+              <input ref={contactNoRef} type='number' name='contactNo' required className='p-2 rounded-md mx-2 bg-slate-50 border-slate-200 border-2' />
 
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Explore the Next.js 13 playground.
-          </p>
-        </a>
+              <label htmlFor='attendance'>Attending?</label>
+              <fieldset className="mt-4">
+                <legend className="sr-only">Attending?</legend>
+                <div className="space-y-4 sm:flex sm:items-center sm:space-x-10 sm:space-y-0">
+                    <div className="flex items-center">
+                      <input
+                        id='attending-yes'
+                        name="notification-method"
+                        type="radio"
+                        onChange={() => setAttendance((prev) => !prev)}
+                        className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                      />
+                      <label htmlFor='attending-yes' className="ml-3 block text-sm font-medium leading-6 text-gray-900">
+                        Yes, of course! 🎉
+                      </label>
+                    </div>
+                </div>
+                <div className="space-y-4 sm:flex sm:items-center sm:space-x-10 sm:space-y-0">
+                    <div className="flex items-center">
+                      <input
+                        id='attending-yes'
+                        name="notification-method"
+                        type="radio"
+                        onChange={() => setAttendance((prev) => !prev)}
+                        defaultChecked={true}
+                        className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                      />
+                      <label htmlFor='attending-yes' className="ml-3 block text-sm font-medium leading-6 text-gray-900">
+                        Sorry, I can&apos;t make it 😞
+                      </label>
+                    </div>
+                </div>
+              </fieldset>
 
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+              {attendance && (
+                <div className='col-span-full'>
+                  <input ref={contactNoRef} type='number' name='contactNo' required />
+                  <p>Options for food</p>
+
+                </div>
+              )}
+
+              <button type='submit' className='bg-pink-500 px-6 py-2 rounded-md col-span-full max-w-sm w-52 mt-8 mx-auto transition-colors ease-in-out duration-500 text-white border-2 border-pink-500 hover:text-pink-500 hover:bg-white hover:border-pink-500'>RSVP 📤</button>
+            </form>
+          }
+        </li>
+
+      </ul>
+
+
+
+
+
+    </div>
   )
 }
